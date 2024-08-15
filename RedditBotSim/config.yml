@@ -1,0 +1,39 @@
+paths:
+  reddit_posts: "./Data/RedditData/Posts.csv"
+  reddit_comments1: "./Data/RedditData/Comment_1.csv"
+  reddit_comments2: "./Data/RedditData/Comment_2.csv"
+  reddit_users: "./Data/RedditData/Users.csv"
+  agent_bots: "./Data/LLMAgentProfile/agent_profiles.csv"
+  Subreddit: "./Data/Subreddit.csv"
+  Russia_Ukraine: "./Data/Knowledge/ukraine_russia.csv"
+  US_Politics: "./Data/Knowledge/us_politics.csv"
+  Palestinian_Israeli_conflict: "./Data/Knowledge/Israeli_palestinian_conflict.csv"
+  World_news: "./Data/Knowledge/world_news.csv"
+  
+
+  
+
+
+log:
+  log_file: "out.log"
+
+constants:
+  page_size: 20
+  recommendpostsday: 4
+
+agents_num: 1000
+
+time:
+  start_time: "2023-06-20 00:00:00"
+  end_time: "2024-06-19 23:59:59"
+
+subreddit:
+  [news, GlobalTalk, UpliftingNews, worldnews, politics, InternationalNews]
+
+actions:
+  PostAction: Action.PostAction
+  Comment1Action: Action.CommentAction1
+  Comment2Action: Action.CommentAction2
+  BrowsePosts: Action.BrowsePosts
+  BrowseComments: Action.BrowseComments
+  StopAction: Action.StopAction
