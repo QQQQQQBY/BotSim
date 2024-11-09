@@ -7,6 +7,8 @@ import torch
 import torch.nn as nn
 from tqdm import tqdm
 import time
+from sklearn.metrics import roc_auc_score, average_precision_score, roc_curve, precision_recall_curve
+
 from sklearn.utils import shuffle
 # from torch.utils.data import DataLoader,Dataset
 from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_score
@@ -191,7 +193,7 @@ def train(data, train_idx, val_idx, test_idx,model,num_epochs,lr,weight_decay,lo
               'acc_train: {:.4f}'.format(acc_train.item()))
         logger.info(f'Epoch: {epoch + 1}, loss_train: {loss.item()}, acc_train: {acc_train.item()}')
 
-        acc_val,f1_val,precision_val,recall_val,loss_val = test(data,val_idx,model,loss_ce)
+        acc_val,f1_val,precision_val,recall_val,loss_val, roc_auc, pr_auc = test(data,val_idx,model,loss_ce)
         print("Val set results:",
           "epoch= {:}".format(epoch+1),
           "test_accuracy= {:.4f}".format(acc_val),
@@ -207,7 +209,7 @@ def train(data, train_idx, val_idx, test_idx,model,num_epochs,lr,weight_decay,lo
 
             torch.save(model.state_dict(),"BotSim-24-Exp/Method/BestModel/{}.pth".format(model_file))
 
-        acc_test,f1_test,precision_test,recall_test,loss = test(data,test_idx,model,loss_ce)
+        acc_test,f1_test,precision_test,recall_test,loss, roc_auc, pr_auc = test(data,test_idx,model,loss_ce)
         print("Test set results:",
           "epoch= {:}".format(epoch),
           "test_accuracy= {:.4f}".format(acc_test),
@@ -230,7 +232,8 @@ def test(data,idx,model,loss_ce):
     recall_test_total = 0
     loss_test_total = 0
     i = 0
-    
+    roc_auc_total = 0
+    pr_auc_total = 0
     data = data.cuda()
     value_feature = data.x[:,0:10].cuda()
     text_feature = data.x[:, 10:].cuda()        
@@ -257,8 +260,14 @@ def test(data,idx,model,loss_ce):
     precision_test = precision_test_total/i
     recall_test = recall_test_total/i
     loss = loss_test_total/i
+    pr_auc_test = average_precision_score(label, out)
+    pr_auc_total = pr_auc_total + pr_auc_test
+    roc_auc_test = roc_auc_score(label, out)
+    roc_auc_total = roc_auc_total + roc_auc_test
+    roc_auc = roc_auc_total/i
+    pr_auc = pr_auc_total/i
     
-    return acc_test,f1_test,precision_test,recall_test,loss
+    return acc_test,f1_test,precision_test,recall_test,loss, roc_auc, pr_auc
     
 
 
@@ -294,6 +303,8 @@ if __name__ == "__main__":
     precision_list = []
     recall_list = []
     f1_list = []
+    pr_auc_list = []
+    roc_auc_list = []
     for i,seed in enumerate(args.random_seed):
         torch.manual_seed(seed)
         torch.cuda.manual_seed(seed)
@@ -312,28 +323,35 @@ if __name__ == "__main__":
         logger.info(f'End the {i+1} training')
 
         model.load_state_dict(torch.load('BotSim-24-Exp/Method/BestModel/{}.pth'.format(args.model_file)))
-        acc_test,f1_test,precision_test,recall_test,loss = test(dataloader,test_idx,model,loss_ce)
+        acc_test,f1_test,precision_test,recall_test,loss, roc_auc, pr_auc = test(dataloader,test_idx,model,loss_ce)
         print("Test set Best results:",
           "test_accuracy= {:.4f}".format(acc_test),
           "precision= {:.4f}".format(precision_test),
           "recall= {:.4f}".format(recall_test),
-          "f1_score= {:.4f}".format(f1_test))
-        logger.info(f"Test set results: test_accuracy= {acc_test}, precision= {precision_test}, recall= {recall_test}, f1_score= {f1_test}")
+          "f1_score= {:.4f}".format(f1_test),
+          "roc_auc= {:.4f}".format(roc_auc),
+         "pr_auc= {:.4f}".format(pr_auc))
+        logger.info(f"Test set results: test_accuracy= {acc_test}, precision= {precision_test}, recall= {recall_test}, f1_score= {f1_test}, roc_auc = {roc_auc}, pr_auc = {pr_auc}")
         acc_list.append(acc_test*100)
         precision_list.append(precision_test*100)
         recall_list.append(recall_test*100)
         f1_list.append(f1_test*100)
+        pr_auc_list.append(pr_auc_test*100)
+        roc_auc_list.append(roc_auc_test*100)
     print('acc:       {:.2f} + {:.2f}'.format(np.array(acc_list).mean(), np.std(acc_list)))
     print('precision: {:.2f} + {:.2f}'.format(np.array(precision_list).mean(), np.std(precision_list)))
     print('recall:    {:.2f} + {:.2f}'.format(np.array(recall_list).mean(), np.std(recall_list)))
     print('f1:        {:.2f} + {:.2f}'.format(np.array(f1_list).mean(), np.std(f1_list))) 
-    
+    print('pr_auc:        {:.2f} + {:.2f}'.format(np.array(pr_auc_list).mean(), np.std(pr_auc_list))) 
+    print('roc_auc:        {:.2f} + {:.2f}'.format(np.array(roc_auc_list).mean(), np.std(roc_auc_list))) 
     
     logger.info('acc:       {:.2f} + {:.2f}'.format(np.array(acc_list).mean(), np.std(acc_list)))
     logger.info('precision: {:.2f} + {:.2f}'.format(np.array(precision_list).mean(), np.std(precision_list)))
     logger.info('recall:    {:.2f} + {:.2f}'.format(np.array(recall_list).mean(), np.std(recall_list)))
     logger.info('f1:        {:.2f} + {:.2f}'.format(np.array(f1_list).mean(), np.std(f1_list))) 
-
+    logger.info('roc_auc:        {:.2f} + {:.2f}'.format(np.array(roc_auc_list).mean(), np.std(roc_auc_list))) 
+    logger.info('pr_auc:        {:.2f} + {:.2f}'.format(np.array(pr_auc_list).mean(), np.std(pr_auc_list))) 
+    
    # Record the program end time
     end_time = time.localtime()
     end_time = time.strftime('%Y-%m-%d %H:%M:%S',end_time)

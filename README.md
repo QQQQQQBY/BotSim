@@ -15,3 +15,7 @@ The BotSim-24-Exp folder showcases the detection performance benchmarks for bot 
 ## BotSim-24-mini-sample folder
 
 The BotSim-24-mini-sample folder presents a subset of the dataset, including profile information (metadata.csv) and text data (text.json).
+
+## LLM-Select folder
+
+The LLM-Select folder introduces the LLMs selection strategy used in the construction of the BotSim-24 dataset is described in detail.
