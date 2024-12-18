@@ -19,3 +19,8 @@ The BotSim-24-mini-sample folder presents a subset of the dataset, including pro
 ## LLM-Select folder
 
 The LLM-Select folder introduces the LLMs selection strategy used in the construction of the BotSim-24 dataset is described in detail.
+
+
+## BotSim-24 Dataset
+
+The organized BotSim-24 Dataset can be downloaded from [Google Drive](https://drive.google.com/drive/folders/1AmSkUL2ZB5pFVEznmfaDCRUAPWfV14sQ)
