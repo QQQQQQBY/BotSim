@@ -7,7 +7,7 @@
 
 
  <p align="center">
-<img src="./imgs/botnet.png" width="400">
+<img src="./Imgs/botnet.png" width="400">
 </p>
 
 <p align="center">
@@ -28,7 +28,7 @@
 - Recommendation Function: By comprehensively considering features such as post publication time and interaction popularity (such as number of likes), it enables the recommendation of information streams, simulating the behavior of recommendation systems on real social platforms.
 
  <p align="center">
-<img src="./imgs/modeloverview.jpg" width="600">
+<img src="./Imgs/modeloverview.jpg" width="600">
 </p>
 
 
