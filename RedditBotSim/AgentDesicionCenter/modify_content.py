@@ -27,8 +27,8 @@ def modify_content(Claim):
 
     model='gpt-4o'
     temperature=0.9
-    openai_api_base=''
-    openai_api_key=''
+    openai_api_base=' '
+    openai_api_key=' '
 
     input_llm_prompt = """Rewrite the news in [News] so that the generated news has a different point of view than the original news. You need to synthesize (1),(2),(3),(4),and (5) of the information to complete the response.
     (1) Modify key factors in the news, such as time, place, event, mood, opinion, etc.

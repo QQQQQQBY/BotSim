@@ -1,7 +1,8 @@
 import sys
-# sys.path.append('./Action')
+sys.path.append('./RedditBotSim/Action')
 from Basics import Action
 from datetime import datetime
+sys.path.append('./RedditBotSim/Environment')
 from Entity import RedditPost, RedditComment1, RedditUser, SubReddit, RedditComment1
 from typing import List, Optional, Callable, Dict, Any, Type
 import math

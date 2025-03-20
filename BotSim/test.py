@@ -3,7 +3,7 @@ from env import RedditEnv
 from utils import load_config
 
 
-config = load_config("./config.yaml")
+config = load_config("config.yaml")
 env = RedditEnv(config)
 init = env.reset()
 print(init)

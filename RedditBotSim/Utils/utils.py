@@ -14,7 +14,7 @@ import numpy as np
 import re
 from ast import literal_eval
 import sys
-sys.path.append('./Environment')
+sys.path.append('./RedditBotSim/Environment')
 from Entity import RedditComment1, RedditPost, RedditComment2
 
 

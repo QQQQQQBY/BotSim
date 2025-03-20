@@ -1,16 +1,14 @@
 paths:
-  reddit_posts: "./Data/RedditData/Posts.csv"
-  reddit_comments1: "./Data/RedditData/Comment_1.csv"
-  reddit_comments2: "./Data/RedditData/Comment_2.csv"
-  reddit_users: "./Data/RedditData/Users.csv"
-  agent_bots: "./Data/LLMAgentProfile/agent_profiles.csv"
-  Subreddit: "./Data/Subreddit.csv"
-  Russia_Ukraine: "./Data/Knowledge/ukraine_russia.csv"
-  US_Politics: "./Data/Knowledge/us_politics.csv"
-  Palestinian_Israeli_conflict: "./Data/Knowledge/Israeli_palestinian_conflict.csv"
-  World_news: "./Data/Knowledge/world_news.csv"
-  
-
+  reddit_posts: "./RedditBotSim/Data/RedditData/Posts.csv"
+  reddit_comments1: "./RedditBotSim/Data/RedditData/Comment_1.csv"
+  reddit_comments2: "./RedditBotSim/Data/RedditData/Comment_2.csv"
+  reddit_users: "./RedditBotSim/Data/RedditData/User.csv"
+  agent_bots: "./RedditBotSim/Data/LLMAgentProfile/agent_profiles.csv"
+  Subreddit: "./RedditBotSim/Data/Subreddit.csv"
+  Russia_Ukraine: "./RedditBotSim/Data/Knowledge/ukraine_russia.csv"
+  US_Politics: "./RedditBotSim/Data/Knowledge/us_politics.csv"
+  Palestinian_Israeli_conflict: "./RedditBotSim/Data/Knowledge/Israeli_palestinian_conflict.csv"
+  World_news: "./RedditBotSim/Data/Knowledge/world_news.csv"
   
 
 

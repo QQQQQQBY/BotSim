@@ -3,7 +3,6 @@ paths:
   posts: "./data/posts.csv"
   comments: "./data/comments.csv"
   reddit_users: "./data/users.csv"
-  have_read_posts: "./data/read_posts.csv" 
   user_follow: "./data/user_follow.csv"
 
 log:

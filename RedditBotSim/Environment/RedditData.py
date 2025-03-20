@@ -1,9 +1,9 @@
 import csv
 import sys
-sys.path.append('./Environment')
+sys.path.append('./RedditBotSim/Environment')
 from Entity import RedditPost, RedditComment1, RedditComment2, RedditUser, SubReddit
 from datetime import datetime
-sys.path.append('./Utils')
+sys.path.append('./RedditBotSim/Utils')
 from utils import (
     load_config,
     hot_by_score_time,
@@ -431,7 +431,13 @@ class RedditData:
                 # Comment content is added to the corresponding user's comment
                 if row["comment_author_id"] in list(self.users.keys()):
                     self.users[row["comment_author_id"]].add_user_comment_by_commet2(
+                        comment=comment2)
+
+                # 评论内容添加到对应用户的评论中
+                if row["comment_author_id"] in list(self.users.keys()):
+                    self.users[row["comment_author_id"]].add_user_comment_by_commet2(
                         comment=comment2
+                    )
 
 
     def _load_users(self, file_path: str):

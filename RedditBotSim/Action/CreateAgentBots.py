@@ -286,7 +286,7 @@ def main():
     min_len = min([ID_len, name_len, description_len, age_len, gender_len, region_len, education_len, ideo_len])
 
     # Specify the CSV file path
-    csv_file_path = "./Data/LLMAgentProfile/agent_profiles.csv"
+    csv_file_path = "./RedditBotSim/Data/LLMAgentProfile/agent_profiles.csv"
 
     
 

@@ -1,9 +1,9 @@
 import os
 import sys
-sys.path.append('./Action')
+sys.path.append('./RedditBotSim/Action')
 from Action import CreateUserAction, BrowsePosts, PostAction, CommentAction1, BrowseComments, StopAction, CommentAction2
 from Basics import Action
-sys.path.append('./Environment')
+sys.path.append('./RedditBotSim/Environment')
 from env import RedditEnv
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import ChatPromptTemplate
@@ -12,7 +12,7 @@ import random
 from Entity import RedditUser, RedditPost
 from datetime import datetime, timedelta
 import pandas as pd
-sys.path.append('./Paper_Agent/Utils')
+sys.path.append('./RedditBotSim/Utils')
 import time_utils as time_utils
 import ast 
 from modify_content import modify_content
@@ -314,6 +314,8 @@ class RedditAgent:
         knowledge = ""
         for i, k in enumerate(post_knowledge):
             knowledge = knowledge + str(i + 1) + ". " + str(k)
+        if knowledge == "":
+            knowledge = df.sample(n=1, replace=False)['claim'].tolist()
         # rewrite
         post_knowledge = modify_content(knowledge)
         return post_knowledge

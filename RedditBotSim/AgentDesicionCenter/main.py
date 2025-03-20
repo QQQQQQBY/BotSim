@@ -3,9 +3,9 @@ import random
 from langchain_openai import ChatOpenAI
 from reddit_agent import create_reddit_user, RedditAgent
 import sys
-sys.path.append('./Environment')
+sys.path.append('./RedditBotSimEnvironment')
 from env import RedditEnv
-sys.path.append('./Utils')
+sys.path.append('./RedditBotSimUtils')
 from utils import load_config, set_logger
 import time_utils as time_utils
 from tqdm import tqdm
@@ -21,12 +21,11 @@ def main(logger, client, config, env, model, temperature):
     logger.info(" ")
     begin_time = time_utils.get_now_time()
 
-
     # Read the CSV file of the agent user
+    # agent_profiles.csv file: We used LLM and real user statistics to generate basic information about the bot account in advance, Including "user_id, user_name, Age, Gender, Region and EducationLevel, Ideology, the Description, Preference, SubRedditNum, SubRedditList, PostNum, Comment1Num Comment2Num, Formulate_Post Formulate_Comment1, Formulate_Comment2". These bot accounts are then created and stored in the overall user pool (Users.csv).
+    # Users.csv: Users.csv is a collection of basic user information. The environment runs initially with only human account data, and then adds one piece of data to this file with each new account created.
     total_user_nums = config["agents_num"]    
-    df_agent_user = pd.read_csv(config["paths"]["agent_bots"], encoding='utf-8')
-
-
+    df_agent_user = pd.read_csv(config["paths"]["agent_bots"], encoding='utf-8') # agent_profiles.csv
     # Create Reddit Agents
     for user_num in tqdm(range(total_user_nums)) :
         logger.info(f'Start time of {user_num} user:{time_utils.get_now_time()}')
@@ -36,7 +35,7 @@ def main(logger, client, config, env, model, temperature):
         agent_columns = ['user_id', 'user_name', 'Description', 'SubRedditList', 'PostNum', 'Comment1Num', 'Comment2Num', 'Preference']
         new_agent_user = df_agent_user.loc[user_num, agent_columns]
         reddit_user, PostNum, CommentNum1, CommentNum2, user_character_setting, user_subreddit = create_reddit_user(env, new_agent_user)
-        reddit_agent = RedditAgent(reddit_user, env)  
+        reddit_agent = RedditAgent(reddit_user, env)   # An agent bot data will be added to the Users.csv file
 
         # Profile
         row = df_agent_user.iloc[user_num]
@@ -51,30 +50,30 @@ def main(logger, client, config, env, model, temperature):
 
 
         # PostAction
-        if isinstance(row['Formulate_Post'], list):
-            Formulate_Post = row['Formulate_Post']
-        else:
-            Formulate_Post = ast.literal_eval(row['Formulate_Post'])
+        # if isinstance(row['Formulate_Post'], list):
+        #     Formulate_Post = row['Formulate_Post']
+        # else:
+        #     Formulate_Post = ast.literal_eval(row['Formulate_Post'])
 
-        for post_index, post_info in enumerate(Formulate_Post):
-            # logger.info(f'The Posting start time of user {user_num}: {time_utils.get_now_time()}')
-            # logger.info("************")
-            planed_subreddit = post_info[2]
-            planed_preference = post_info[3]
-            planed_time = post_info[1]
-            length = ast.literal_eval(row['PostLengthList'])[post_index]
-            post_time = reddit_agent.set_posttime(planed_time)
-            Knowledge = reddit_agent.select_post(planed_preference, post_time, config)
-            Prompt_post = f"""You are {UserName}, your gender is {Gender}, your age is {Age}, you are from {Region}, your education level is {Education}, your political ideology is {Ideology}, your personal description is {Description}, and you are primarily interested in {planed_preference} events. You need to generate a post about {planed_preference} news. Additional background information on this news is [Knowledge]. You need to summarize the background [Knowledge] and generate your [Response]. Your [Response] should match your personal information and your response must refer to [Knowledge]. [Response] must be a string of characters close to the {length} character.
+        # for post_index, post_info in enumerate(Formulate_Post):
+        #     # logger.info(f'The Posting start time of user {user_num}: {time_utils.get_now_time()}')
+        #     # logger.info("************")
+        #     planed_subreddit = post_info[2]
+        #     planed_preference = post_info[3]
+        #     planed_time = post_info[1]
+        #     length = ast.literal_eval(row['PostLengthList'])[post_index]
+        #     post_time = reddit_agent.set_posttime(planed_time)
+        #     Knowledge = reddit_agent.select_post(planed_preference, post_time, config)
+        #     Prompt_post = f"""You are {UserName}, your gender is {Gender}, your age is {Age}, you are from {Region}, your education level is {Education}, your political ideology is {Ideology}, your personal description is {Description}, and you are primarily interested in {planed_preference} events. You need to generate a post about {planed_preference} news. Additional background information on this news is [Knowledge]. You need to summarize the background [Knowledge] and generate your [Response]. Your [Response] should match your personal information and your response must refer to [Knowledge]. [Response] must be a string of characters close to the {length} character.
             
-                [Knowledge]:
-                    {Knowledge}
+        #         [Knowledge]:
+        #             {Knowledge}
                 
-                [Response]:
-            """
+        #         [Response]:
+        #     """
             
-            new_post = reddit_agent.post(client, model, Prompt_post, temperature, post_time=post_time, subreddit = planed_subreddit)
-            print(post_index)
+        #     new_post = reddit_agent.post(client, model, Prompt_post, temperature, post_time=post_time, subreddit = planed_subreddit)
+        #     print(post_index)
         
          # Comment1Action
         if isinstance(row['Formulate_Comment1'], list):
@@ -97,7 +96,7 @@ def main(logger, client, config, env, model, temperature):
                     recommend_posts_id_list.append(posts_ids.submission_id)
                     recommend_posts_time_list.append(posts_ids.time)
                 
-                ImitateComment =  reddit_agent.comment_imitate(config["paths"]["comments"])
+                ImitateComment =  reddit_agent.comment_imitate(config["paths"]["reddit_comments1"])
                 count = 0
                 commendposts = reddit_agent.get_recommend_posts(recommend_posts, count)
                 # with open(config["paths"]["Prompt_Comment1"], 'r', encoding='utf-8') as file:
@@ -200,7 +199,7 @@ def main(logger, client, config, env, model, temperature):
                             recommend_comments_time_list.append(comment_ids.comment1_time)
                             recommend_comments.append(comment_ids)
                 
-                ImitateComment = reddit_agent.comment_imitate(config["paths"]["comments"])
+                ImitateComment = reddit_agent.comment_imitate(config["paths"]["reddit_comments1"])
                 count = 0
                 commendposts = reddit_agent.get_recommend_posts(recommend_posts, count)
                 # with open(config["paths"]["Prompt_Comment1"], 'r', encoding='utf-8') as file:
@@ -318,13 +317,13 @@ if __name__ == '__main__':
     
     model='gpt-4o-mini'
     temperature=1.0
-    openai_api_base=''
-    openai_api_key=''
+    openai_api_base=' '
+    openai_api_key=' '
     client = OpenAI(
             api_key = openai_api_key,
             base_url = openai_api_base
             )
-    config = load_config("./config.yml")
+    config = load_config("./RedditBotSim/config.yml")
 
     env = RedditEnv(config)
     env.reset()
